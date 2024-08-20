@@ -26,8 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.wordguessingapp.data.firstRow
+import com.example.wordguessingapp.data.secondRow
+import com.example.wordguessingapp.data.thirdRow
 import com.example.wordguessingapp.data.words
 import com.example.wordguessingapp.ui.theme.GameViewModel
+import com.example.wordguessingapp.ui.theme.LightOrange
 import com.example.wordguessingapp.ui.theme.WordGuessingAppTheme
 import com.example.wordguessingapp.ui.theme.boldHeadlineLarge
 import kotlin.random.Random
@@ -60,9 +64,9 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
     ) {
 
         Text(
-            text = "WORDLE",
+            text = "GUESS THE WORD",
             style = boldHeadlineLarge,
-            modifier = Modifier.padding(bottom = 100.dp)
+            modifier = Modifier.padding(bottom = 100.dp, top = 30.dp)
         )
 
         Row(
@@ -103,7 +107,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     modifier = Modifier
                         .padding(2.dp)
                         .width(70.dp)
-                        .height(70.dp)
+                        .height(70.dp),
+                    enabled = false
                 ) {
 
                 }
@@ -123,7 +128,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     modifier = Modifier
                         .padding(2.dp)
                         .width(70.dp)
-                        .height(70.dp)
+                        .height(70.dp),
+                    enabled = false
                 ) {
 
                 }
@@ -143,7 +149,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     modifier = Modifier
                         .padding(2.dp)
                         .width(70.dp)
-                        .height(70.dp)
+                        .height(70.dp),
+                    enabled = false
                 ) {
 
                 }
@@ -165,7 +172,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     modifier = Modifier
                         .padding(2.dp)
                         .width(70.dp)
-                        .height(70.dp)
+                        .height(70.dp),
+                    enabled = false
                 ) {
 
                 }
@@ -173,9 +181,7 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
         }
 
 
-        val firstRow = listOf('Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P')
-        val secondRow = listOf('A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L')
-        val thirdRow = listOf('Z', 'C', 'V', 'B', 'N', 'M')
+
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -225,7 +231,7 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
 
         ) {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { gameViewModel.check() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.LightGray
                 ),
@@ -266,6 +272,23 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
             ) {
                 Text(text = "<<")
             }
+        }
+
+        Button(
+            onClick = {
+                gameViewModel.generateWord()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = LightOrange
+            ),
+            shape = CutCornerShape(0.dp),
+            modifier = modifier
+                .padding(3.dp)
+        ) {
+            Text(
+                text = "New word?",
+                style = MaterialTheme.typography.headlineLarge
+            )
         }
     }
 }

@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.wordguessingapp.data.words
+import kotlin.random.Random
 
 
 enum class Result {
@@ -16,6 +18,11 @@ class GameViewModel : ViewModel() {
 
     private val _curWord: MutableState<String> = mutableStateOf("")
     val curWord: MutableState<String> get() = _curWord
+    val solution: MutableState<String> = mutableStateOf("")
+
+    init {
+        generateWord()
+    }
 
 
     fun addLetter(c: Char) {
@@ -33,6 +40,16 @@ class GameViewModel : ViewModel() {
             Log.d("CURRENT WORD", _curWord.value)
         }
     }
+
+    fun check() { /* TODO */ }
+
+    fun generateWord() {
+        val randIndex = Random.nextInt(words.size)
+        solution.value = words[randIndex]
+        Log.d("GENERATED SOLUTION", solution.value)
+    }
+
+
 
 
 }
