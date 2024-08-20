@@ -18,6 +18,7 @@ import com.example.wordguessingapp.data.secondRow
 import com.example.wordguessingapp.data.thirdRow
 import com.example.wordguessingapp.ui.theme.GameViewModel
 import com.example.wordguessingapp.ui.theme.LightOrange
+import com.example.wordguessingapp.ui.theme.boldHeadlineLarge
 
 @Composable
 fun keyboard(gameViewModel: GameViewModel) {
@@ -139,7 +140,7 @@ fun keyboard(gameViewModel: GameViewModel) {
     ) {
         Text(
             text = "New word?",
-            style = MaterialTheme.typography.headlineLarge
+            style = boldHeadlineLarge
         )
     }
 }
