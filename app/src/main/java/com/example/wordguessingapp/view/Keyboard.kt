@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.wordguessingapp.data.firstRow
 import com.example.wordguessingapp.data.secondRow
 import com.example.wordguessingapp.data.thirdRow
@@ -38,7 +40,9 @@ fun keyboard(gameViewModel: GameViewModel) {
             ) {
                 Text(
                     text = "${firstRow[btnIndex]}",
-                    color = Color.Black
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -64,7 +68,9 @@ fun keyboard(gameViewModel: GameViewModel) {
             ) {
                 Text(
                     text = "${secondRow[btnIndex]}",
-                    color = Color.Black
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -85,7 +91,9 @@ fun keyboard(gameViewModel: GameViewModel) {
         ) {
             Text(
                 text = "ENTER",
-                color = Color.Black
+                color = Color.Black,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
             )
         }
 
@@ -103,7 +111,9 @@ fun keyboard(gameViewModel: GameViewModel) {
             ) {
                 Text(
                     text = "${thirdRow[btnIndex]}",
-                    color = Color.Black
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -120,7 +130,9 @@ fun keyboard(gameViewModel: GameViewModel) {
         ) {
             Text(
                 text = "<<",
-                color = Color.Black
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
         }
     }
