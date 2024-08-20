@@ -1,4 +1,4 @@
-package com.example.wordguessingapp.ui.theme
+package com.example.wordguessingapp.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
