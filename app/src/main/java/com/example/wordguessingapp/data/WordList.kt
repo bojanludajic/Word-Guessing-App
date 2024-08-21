@@ -2,14 +2,14 @@ package com.example.wordguessingapp.data
 
 const val WORD_LENGTH = 5
 val words = listOf(
-    "apple", "bread", "chair", "dance", "eagle", "flame", "grape", "house", "image", "jelly",
-    "knife", "lemon", "magic", "north", "ocean", "peace", "queen", "river", "stone", "table",
-    "uncle", "vivid", "water", "xenon", "yacht", "zebra", "angel", "brave", "crown", "drive",
-    "earth", "frost", "giant", "heart", "index", "jolly", "kites", "lover", "mouse", "noble",
-    "orbit", "paint", "quill", "ranch", "spine", "tiger", "under", "viper", "wheel", "xylem",
-    "yield", "zesty", "armor", "blaze", "claim", "demon", "ember", "flint", "glove", "honey",
-    "ideal", "jokes", "kings", "lunar", "moose", "nurse", "olive", "piano", "quack", "rebel",
-    "shine", "track", "unity", "valor", "whale", "xerox", "young", "zones", "alike", "brisk",
-    "coral", "dizzy", "elite", "faith", "grind", "haste", "ivory", "jumpy", "knobs", "lodge",
-    "march", "nerdy", "oxide", "plumb", "quart", "realm", "snail", "thick"
+    "APPLE", "BREAD", "CHAIR", "DANCE", "EAGLE", "FLAME", "GRAPE", "HOUSE", "IMAGE", "JELLY",
+    "KNIFE", "LEMON", "MAGIC", "NORTH", "OCEAN", "PEACE", "QUEEN", "RIVER", "STONE", "TABLE",
+    "UNCLE", "VIVID", "WATER", "XENON", "YACHT", "ZEBRA", "ANGEL", "BRAVE", "CROWN", "DRIVE",
+    "EARTH", "FROST", "GIANT", "HEART", "INDEX", "JOLLY", "KITES", "LOVER", "MOUSE", "NOBLE",
+    "ORBIT", "PAINT", "QUILL", "RANCH", "SPINE", "TIGER", "UNDER", "VIPER", "WHEEL", "XYLEM",
+    "YIELD", "ZESTY", "ARMOR", "BLAZE", "CLAIM", "DEMON", "EMBER", "FLINT", "GLOVE", "HONEY",
+    "IDEAL", "JOKES", "KINGS", "LUNAR", "MOOSE", "NURSE", "OLIVE", "PIANO", "QUACK", "REBEL",
+    "SHINE", "TRACK", "UNITY", "VALOR", "WHALE", "XEROX", "YOUNG", "ZONES", "ALIKE", "BRISK",
+    "CORAL", "DIZZY", "ELITE", "FAITH", "GRIND", "HASTE", "IVORY", "JUMPY", "KNOBS", "LODGE",
+    "MARCH", "NERDY", "OXIDE", "PLUMB", "QUART", "REALM", "SNAIL", "THICK"
 )
