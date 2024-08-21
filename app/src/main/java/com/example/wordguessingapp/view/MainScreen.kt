@@ -56,11 +56,11 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
 
     val endMessage by remember { mutableStateOf(gameViewModel.endMessage) }
     var showDialog by remember { mutableStateOf(false) }
+    var solved by remember { mutableStateOf(gameViewModel.solved.value) }
+    Log.d("SOLUTION", solved.toString())
 
-    var isGuessed = remember { gameViewModel.endMessage.length > 0 }
-    
-    LaunchedEffect(isGuessed) {
-        if(endMessage.isNotEmpty()) {
+    LaunchedEffect(solved) {
+        if(solved) {
             showDialog = true
             Log.d("SOLUTION", "ye")
         }
@@ -88,7 +88,7 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .padding(20.dp)
+                .padding(top = 50.dp, start = 13.dp, end = 10.dp)
                 .fillMaxSize()
         ) {
 
@@ -163,7 +163,9 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
              */
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 100.dp)
             ) {
                 repeat(10) { btnIndex ->
                     Button(
@@ -171,7 +173,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         shape = CutCornerShape(0.dp),
                         modifier = Modifier
                             .padding(2.dp)
-                            .weight(1f),
+                            .height(45.dp)
+                            .width(33.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.LightGray
                         ),
@@ -180,8 +183,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         Text(
                             text = "${firstRow[btnIndex]}",
                             color = Color.Black,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
@@ -199,7 +202,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         shape = CutCornerShape(0.dp),
                         modifier = Modifier
                             .padding(2.dp)
-                            .weight(1f),
+                            .height(45.dp)
+                            .width(33.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.LightGray
                         ),
@@ -208,35 +212,17 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         Text(
                             text = "${secondRow[btnIndex]}",
                             color = Color.Black,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
             }
             Row(
-
+                modifier = Modifier
+                    .padding(start = 18.dp)
             ) {
-                Button(
-                    onClick = { gameViewModel.check() },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.LightGray
-                    ),
-                    shape = CutCornerShape(0.dp),
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .weight(3f),
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Text(
-                        text = "ENTER",
-                        color = Color.Black,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                repeat(6) { btnIndex ->
+                repeat(7) { btnIndex ->
                     Button(
                         onClick = { gameViewModel.addLetter(thirdRow[btnIndex]) },
                         colors = ButtonDefaults.buttonColors(
@@ -245,14 +231,15 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         shape = CutCornerShape(0.dp),
                         modifier = Modifier
                             .padding(2.dp)
-                            .weight(2f),
+                            .height(45.dp)
+                            .width(33.dp),
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
                             text = "${thirdRow[btnIndex]}",
                             color = Color.Black,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
@@ -263,17 +250,40 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     ),
                     shape = CutCornerShape(0.dp),
                     modifier = Modifier
-                        .padding(horizontal = 2.dp)
-                        .weight(2f),
+                        .padding(horizontal = 2.dp, vertical = 2.dp)
+                        .width(60.dp)
+                        .height(45.dp),
                     contentPadding = PaddingValues(0.dp)
                 ) {
                     Text(
-                        text = "<<",
+                        text = "⌫",
                         color = Color.Black,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier
+                            .padding(bottom = 7.dp)
                     )
                 }
+            }
+
+            Button(
+                onClick = { gameViewModel.check() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.LightGray
+                ),
+                shape = CutCornerShape(0.dp),
+                modifier = Modifier
+                    .padding(40.dp)
+                    .width(100.dp)
+                    .height(70.dp),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    text = "ENTER",
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             if(showDialog) {

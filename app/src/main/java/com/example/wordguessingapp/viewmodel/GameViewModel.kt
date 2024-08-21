@@ -26,6 +26,7 @@ class GameViewModel : ViewModel() {
     val guessList = mutableListOf<String>("", "", "", "", "")
 
     var endMessage by mutableStateOf("")
+    var solved = mutableStateOf(false)
 
     init {
         generateWord()
@@ -52,6 +53,7 @@ class GameViewModel : ViewModel() {
             if(_curWord.value == solution.value) {
                 endMessage = "Great job!"
                 Log.d("SOLUTION SOLVED", "$endMessage")
+                solved.value = true
             } else if(currentRow <= 4) {
                 guessList[currentRow] = _curWord.value
                 currentRow += 1
