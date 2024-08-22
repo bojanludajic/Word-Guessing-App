@@ -11,3 +11,10 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val LightOrange  = Color(0xFFFF5722)
+val WashedOutGreen = Color(0xFFB0DAB9)
+val WashedOutYellow = Color(0xFFFFF4B2)
+val WashedOutRed = Color(0xFFEBB8B8)
+
+val DarkerGreen = Color(0xFF9BCC8D)
+val DarkerYellow = Color(0xFFFFE082)
+val DarkerRed = Color(0xFFCE6C6C)

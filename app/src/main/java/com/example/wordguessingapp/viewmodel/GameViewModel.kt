@@ -5,8 +5,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.example.wordguessingapp.data.words
+import com.example.wordguessingapp.ui.theme.DarkerGreen
+import com.example.wordguessingapp.ui.theme.DarkerRed
+import com.example.wordguessingapp.ui.theme.DarkerYellow
 import kotlin.random.Random
 
 
@@ -28,9 +32,13 @@ class GameViewModel : ViewModel() {
     var endMessage by mutableStateOf("")
     var solved = mutableStateOf(false)
 
+    var letterColors: MutableMap<Char, Color> = ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
+        private set
+
     init {
         generateWord()
     }
+
 
     fun addLetter(c: Char) {
         if(_curWord.value.length < 5) {
@@ -54,10 +62,22 @@ class GameViewModel : ViewModel() {
                 endMessage = "Great job!"
                 Log.d("SOLUTION SOLVED", "$endMessage")
                 solved.value = true
+                for(i in 0..4) {
+                    val guessedChar = _curWord.value[i]
+                    letterColors[guessedChar] = DarkerGreen
+                }
             } else if(currentRow <= 4) {
                 guessList[currentRow] = _curWord.value
                 currentRow += 1
                 Log.d("GUESS LIST", guessList.toString())
+                for(i in 0..4) {
+                    val guessedChar = _curWord.value[i]
+                    letterColors[guessedChar] = when {
+                        guessedChar == solution.value[i] -> DarkerGreen
+                        guessedChar in solution.value -> DarkerYellow
+                        else -> Color.DarkGray
+                    }
+                }
                 _curWord.value = ""
             } else {
                 endMessage = "Next time!"

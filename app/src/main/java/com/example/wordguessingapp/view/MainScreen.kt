@@ -37,6 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColor
+import androidx.core.graphics.toColorInt
 import com.example.wordguessingapp.data.firstRow
 import com.example.wordguessingapp.data.secondRow
 import com.example.wordguessingapp.data.thirdRow
@@ -98,21 +100,20 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 ) {
                     for (letterIndex in 0 until MAX_LETTERS) {
                         val char = gameViewModel.curWord.value.getOrNull(letterIndex)
+                        val color = gameViewModel.letterColors[gameViewModel.guessList[letterIndex] ?: 0] ?: Color.White
                         Box(
                             modifier = Modifier
                                 .padding(2.dp)
                                 .border(2.dp, Color.Black)
-                                .size(65.dp),
+                                .size(65.dp)
+                                .background(color),
                             contentAlignment = Alignment.Center,
-
                             ) {
                             Text(
-                                text = if (rowIndex == gameViewModel.currentRow) {
-                                    char?.toString() ?: ""
-                                } else if (rowIndex < gameViewModel.currentRow) {
-                                    gameViewModel.guessList[rowIndex][letterIndex].toString()
-                                } else {
-                                    ""
+                                text = when {
+                                    rowIndex == gameViewModel.currentRow -> char?.toString() ?: ""
+                                    rowIndex < gameViewModel.currentRow -> gameViewModel.guessList[rowIndex][letterIndex].toString()
+                                    else -> ""
                                 },
                                 style = boldHeadlineLarge
                             )
@@ -168,6 +169,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     .padding(top = 100.dp)
             ) {
                 repeat(10) { btnIndex ->
+                    val char = firstRow.getOrNull(btnIndex) ?: ""
+                    val color = gameViewModel.letterColors[char] ?: Color.LightGray
                     Button(
                         onClick = { gameViewModel.addLetter(firstRow[btnIndex]) },
                         shape = CutCornerShape(0.dp),
@@ -176,13 +179,13 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                             .height(45.dp)
                             .width(33.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.LightGray
+                            containerColor = color
                         ),
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
-                            text = "${firstRow[btnIndex]}",
-                            color = Color.Black,
+                            text = "$char",
+                            color = if(color == Color.DarkGray) Color.White else Color.Black,
                             fontSize = 25.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
@@ -197,6 +200,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     .padding(horizontal = 10.dp)
             ) {
                 repeat(9) { btnIndex ->
+                    val char = secondRow.getOrNull(btnIndex) ?: ""
+                    val color = gameViewModel.letterColors[char] ?: Color.LightGray
                     Button(
                         onClick = { gameViewModel.addLetter(secondRow[btnIndex]) },
                         shape = CutCornerShape(0.dp),
@@ -204,14 +209,14 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                             .padding(2.dp)
                             .height(45.dp)
                             .width(33.dp),
+                        contentPadding = PaddingValues(0.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.LightGray
-                        ),
-                        contentPadding = PaddingValues(0.dp)
+                            containerColor = color
+                        )
                     ) {
                         Text(
-                            text = "${secondRow[btnIndex]}",
-                            color = Color.Black,
+                            text = "$char",
+                            color = if(color == Color.DarkGray) Color.White else Color.Black,
                             fontSize = 25.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
@@ -223,10 +228,12 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     .padding(start = 18.dp)
             ) {
                 repeat(7) { btnIndex ->
+                    val char = thirdRow.getOrNull(btnIndex) ?: ""
+                    val color = gameViewModel.letterColors[char] ?: Color.LightGray
                     Button(
                         onClick = { gameViewModel.addLetter(thirdRow[btnIndex]) },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.LightGray
+                            containerColor = color
                         ),
                         shape = CutCornerShape(0.dp),
                         modifier = Modifier
@@ -236,8 +243,8 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
-                            text = "${thirdRow[btnIndex]}",
-                            color = Color.Black,
+                            text = "$char",
+                            color = if(color == Color.DarkGray) Color.White else Color.Black,
                             fontSize = 25.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
