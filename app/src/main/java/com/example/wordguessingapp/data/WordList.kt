@@ -13,3 +13,7 @@ val words = listOf(
     "CORAL", "DIZZY", "ELITE", "FAITH", "GRIND", "HASTE", "IVORY", "JUMPY", "KNOBS", "LODGE",
     "MARCH", "NERDY", "OXIDE", "PLUMB", "QUART", "REALM", "SNAIL", "THICK"
 )
+
+val serbianWords = listOf(
+    ""
+)

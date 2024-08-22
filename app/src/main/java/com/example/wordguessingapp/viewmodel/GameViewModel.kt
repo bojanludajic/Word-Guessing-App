@@ -11,6 +11,7 @@ import com.example.wordguessingapp.data.words
 import com.example.wordguessingapp.ui.theme.DarkerGreen
 import com.example.wordguessingapp.ui.theme.DarkerRed
 import com.example.wordguessingapp.ui.theme.DarkerYellow
+import com.example.wordguessingapp.viewmodel.Result
 import kotlin.random.Random
 
 
@@ -27,13 +28,16 @@ class GameViewModel : ViewModel() {
 
     var currentRow by mutableStateOf(0)
 
-    val guessList = mutableListOf<String>("", "", "", "", "")
+    var guessList = mutableListOf<String>("", "", "", "", "")
 
     var endMessage by mutableStateOf("")
     var solved = mutableStateOf(false)
 
     var letterColors: MutableMap<Char, Color> = ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
         private set
+
+    var score by mutableStateOf(0)
+
 
     init {
         generateWord()
@@ -59,13 +63,14 @@ class GameViewModel : ViewModel() {
     fun check() {
         if(_curWord.value.length == 5) {
             if(_curWord.value == solution.value) {
-                endMessage = "Great job!"
+                endMessage = Result.values().getOrNull(currentRow).toString()
                 Log.d("SOLUTION SOLVED", "$endMessage")
                 solved.value = true
-                for(i in 0..4) {
-                    val guessedChar = _curWord.value[i]
-                    letterColors[guessedChar] = DarkerGreen
+                _curWord.value.forEach { it ->
+                    letterColors[it] = DarkerGreen
                 }
+                guessList[currentRow] = _curWord.value
+                score += 5 - currentRow
             } else if(currentRow <= 4) {
                 guessList[currentRow] = _curWord.value
                 currentRow += 1
@@ -74,21 +79,34 @@ class GameViewModel : ViewModel() {
                     val guessedChar = _curWord.value[i]
                     letterColors[guessedChar] = when {
                         guessedChar == solution.value[i] -> DarkerGreen
-                        guessedChar in solution.value -> DarkerYellow
+                        guessedChar in solution.value && letterColors[guessedChar] != DarkerGreen -> DarkerYellow
+                        guessedChar in solution.value && letterColors[guessedChar] == DarkerGreen -> DarkerGreen
                         else -> Color.DarkGray
                     }
                 }
                 _curWord.value = ""
-            } else {
+            } else if(currentRow == 5) {
                 endMessage = "Next time!"
             }
         }
     }
 
+    fun checkColor() {
+
+    }
+
     fun generateWord() {
         val randIndex = Random.nextInt(words.size)
         solution.value = words[randIndex]
+        _curWord.value = ""
+        guessList = mutableListOf("", "", "", "", "")
+        letterColors = resetColors()
         Log.d("GENERATED SOLUTION", solution.value)
+        solved.value = false
+    }
+
+    private fun resetColors(): MutableMap<Char, Color> {
+        return ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
     }
 
 
