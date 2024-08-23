@@ -11,7 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.wordguessingapp.viewmodel.GameViewModel
 import com.example.wordguessingapp.ui.theme.WordGuessingAppTheme
-import com.example.wordguessingapp.view.mainScreen
+import com.example.wordguessingapp.view.MainScreen
 
 class MainActivity : ComponentActivity() {
     private val viewModel: GameViewModel by viewModels()
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WordGuessingAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    mainScreen(modifier = Modifier.padding(innerPadding), viewModel)
+                    MainScreen(modifier = Modifier.padding(innerPadding), viewModel)
                 }
             }
         }

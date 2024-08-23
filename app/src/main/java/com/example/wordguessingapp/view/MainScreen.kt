@@ -39,29 +39,32 @@ import androidx.compose.ui.unit.sp
 import com.example.wordguessingapp.data.firstRow
 import com.example.wordguessingapp.data.secondRow
 import com.example.wordguessingapp.data.thirdRow
-import com.example.wordguessingapp.ui.theme.DarkerGreen
-import com.example.wordguessingapp.ui.theme.DarkerYellow
 import com.example.wordguessingapp.viewmodel.GameViewModel
 import com.example.wordguessingapp.ui.theme.boldHeadlineLarge
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition",
+    "MutableCollectionMutableState"
+)
 @Composable
-fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
+fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
     val MAX_ROWS = 5
     val MAX_LETTERS = 5
 
     var finished by remember { mutableStateOf(false) }
     var wrong by remember { mutableStateOf(false) }
-    var solved by remember { mutableStateOf(gameViewModel.solved.value) }
+    val solved by remember { mutableStateOf(gameViewModel.solved.value) }
     Log.d("SOLUTION", solved.toString())
 
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val rowColors by remember { mutableStateOf(MutableList(MAX_ROWS) { MutableList(MAX_LETTERS) { Color.White } }) }
+    var currentRowFocus by remember { mutableStateOf(0) }
+
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {
             TopAppBar(
                 title = { Box(
@@ -91,25 +94,14 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 Row(
 
                 ) {
-                    val guess = gameViewModel.guessList.getOrNull(rowIndex) ?: ""
                     for (letterIndex in 0 until MAX_LETTERS) {
                         val char = gameViewModel.curWord.value.getOrNull(letterIndex)
-                        val map: MutableMap<Char, Color> = gameViewModel.letterColors
-                        val color = if(guess != "") {
-                            when {
-                                guess[letterIndex] == gameViewModel.solution.value[letterIndex] -> DarkerGreen
-                                guess[letterIndex] in gameViewModel.solution.value && map[guess[letterIndex]] != DarkerGreen -> DarkerYellow
-                                else -> Color.DarkGray
-                            }
-                        } else {
-                            Color.White
-                        }
                         Box(
                             modifier = Modifier
                                 .padding(2.dp)
                                 .border(2.dp, Color.Black)
                                 .size(65.dp)
-                                .background(color),
+                                .background(rowColors[rowIndex][letterIndex]),
                             contentAlignment = Alignment.Center,
                             ) {
                             Text(
@@ -119,7 +111,7 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                                     else -> ""
                                 },
                                 style = boldHeadlineLarge,
-                                color = if(color == Color.White) Color.Black else Color.White
+                                color = if(rowColors[rowIndex][letterIndex] == Color.White) Color.Black else Color.White
                             )
                         }
                     }
@@ -240,9 +232,9 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         )
                     }
                 }
-                var solved = gameViewModel.solved.value
+                val solved = gameViewModel.solved.value
                 Button(
-                    onClick = { if (!solved) gameViewModel.removeLetter() else { null } },
+                    onClick = { if (!solved) gameViewModel.removeLetter() },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.LightGray
                     ),
@@ -271,11 +263,18 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 Button(
                     onClick = {
                         gameViewModel.check()
-                        gameViewModel.checkColor()
                         if(gameViewModel.solved.value) {
                             finished = true
                         } else if(gameViewModel.endMessage == "Next time!") {
                             wrong = true
+                        }
+                        if (currentRowFocus in rowColors.indices) {
+                            val guess = gameViewModel.guessList[currentRowFocus]
+                            if(guess.isNotBlank()) {
+                                rowColors[currentRowFocus] = gameViewModel.checkColor(guess)
+                                Log.d("ROW", rowColors[currentRowFocus].toString())
+                                currentRowFocus++
+                            }
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -324,14 +323,19 @@ fun mainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 val endMessage = gameViewModel.endMessage
                 Log.d("SOLUTION", "yes")
                 scope.launch {
-                    snackbarHostState.showSnackbar(
-                        "$endMessage"
+                    snackBarHostState.showSnackbar(
+                        endMessage
                     )
                 }
             }
 
             if(wrong) {
                 val endMessage = "Almost! Solution: ${gameViewModel.solution.value}"
+                scope.launch {
+                    snackBarHostState.showSnackbar(
+                        endMessage
+                    )
+                }
             }
 
         }
