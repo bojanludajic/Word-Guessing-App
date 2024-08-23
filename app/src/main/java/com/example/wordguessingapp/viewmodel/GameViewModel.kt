@@ -34,16 +34,17 @@ class GameViewModel : ViewModel() {
 
     var letterColors: MutableMap<Char, Color> = ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
         private set
+    var rowColors: MutableList<MutableList<Color>> = MutableList(5) { MutableList(5) { Color.White } }
 
-    var score: Int by mutableIntStateOf(0)
-
+    var wins: Int by mutableIntStateOf(0)
+    var wordCount: Int by mutableIntStateOf(0)
 
     init {
         generateWord()
     }
 
     fun addLetter(c: Char) {
-        if(_curWord.value.length < 5) {
+        if(_curWord.value.length < 5 ) {
             _curWord.value += c
             Log.d("ADDED", c.toString())
             Log.d("CURRENT WORD", _curWord.value)
@@ -60,6 +61,7 @@ class GameViewModel : ViewModel() {
 
     fun check() {
         if(_curWord.value.length == 5 && !solved.value) {
+            checkColor(_curWord.value)
             if(_curWord.value == solution.value) {
                 endMessage = Result.entries.getOrNull(currentRow).toString()
                 Log.d("SOLUTION SOLVED", endMessage)
@@ -68,7 +70,7 @@ class GameViewModel : ViewModel() {
                     letterColors[it] = DarkerGreen
                 }
                 guessList[currentRow] = _curWord.value
-                score += 5 - currentRow
+                wins++
             } else if(currentRow <= 4) {
                 guessList[currentRow] = _curWord.value
                 currentRow += 1
@@ -83,13 +85,13 @@ class GameViewModel : ViewModel() {
                     }
                 }
                 _curWord.value = ""
-            } else if(currentRow == 5) {
+            } else if(currentRow == 4) {
                 endMessage = "Next time!"
             }
         }
     }
 
-    fun checkColor(guess: String): MutableList<Color> {
+    private fun checkColor(guess: String) {
         val result = MutableList<Color>(5) { Color.White }
         val solutionChars = solution.value.toMutableList()
 
@@ -111,25 +113,27 @@ class GameViewModel : ViewModel() {
                 }
             }
         }
-        return result
+        rowColors[currentRow] = result.toMutableList()
     }
 
     fun generateWord() {
         val randIndex = Random.nextInt(words.size)
         solution.value = words[randIndex]
         _curWord.value = ""
-        guessList = mutableListOf("     ", "     ", "     ", "     ", "     ")
+        guessList = MutableList(5) {"     "}
         letterColors = resetColors()
+        rowColors = resetRows()
         Log.d("GENERATED SOLUTION", solution.value)
         solved.value = false
         currentRow = 0
+        wordCount++
     }
 
     private fun resetColors(): MutableMap<Char, Color> {
         return ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
     }
 
-
-
-
+    private fun resetRows(): MutableList<MutableList<Color>> {
+        return MutableList(5) { MutableList(5) { Color.White } }
+    }
 }

@@ -54,14 +54,12 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
 
     var finished by remember { mutableStateOf(false) }
     var wrong by remember { mutableStateOf(false) }
-    val solved by remember { mutableStateOf(gameViewModel.solved.value) }
-    Log.d("SOLUTION", solved.toString())
 
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val rowColors by remember { mutableStateOf(MutableList(MAX_ROWS) { MutableList(MAX_LETTERS) { Color.White } }) }
-    var currentRowFocus by remember { mutableStateOf(0) }
+    val rowColors = gameViewModel.rowColors
+    var currentRowFocus = gameViewModel.currentRow
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
@@ -99,7 +97,10 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         Box(
                             modifier = Modifier
                                 .padding(2.dp)
-                                .border(2.dp, Color.Black)
+                                .border(
+                                    width = 2.dp,
+                                    color = if(rowColors[rowIndex][letterIndex] == Color.White) Color.Black else Color.White
+                                )
                                 .size(65.dp)
                                 .background(rowColors[rowIndex][letterIndex]),
                             contentAlignment = Alignment.Center,
@@ -135,15 +136,27 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 )
             }
              */
-
-            val score = gameViewModel.score
-
-            Text(
-                style = boldHeadlineLarge,
-                text = "SCORE: $score",
+            Row(
                 modifier = Modifier
                     .padding(top = 30.dp)
-            )
+            ) {
+                val score = gameViewModel.wins
+                val wordCount = gameViewModel.wordCount
+                val wins = if(score > 0) "$score" else ""
+                Text(
+                    style = boldHeadlineLarge,
+                    text = "WINS: $wins",
+                    modifier = Modifier
+                        .padding(10.dp)
+                )
+
+                Text(
+                    style = boldHeadlineLarge,
+                    text = "WORDS: $wordCount",
+                    modifier = Modifier
+                        .padding(10.dp)
+                )
+            }
 
             Row(
                 modifier = Modifier
@@ -248,10 +261,8 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     Text(
                         text = "⌫",
                         color = Color.Black,
-                        fontSize = 33.sp,
+                        fontSize = 27.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        modifier = Modifier
-                            .padding(bottom = 8.dp)
                     )
                 }
             }
@@ -263,19 +274,9 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 Button(
                     onClick = {
                         gameViewModel.check()
-                        if(gameViewModel.solved.value) {
-                            finished = true
-                        } else if(gameViewModel.endMessage == "Next time!") {
-                            wrong = true
-                        }
-                        if (currentRowFocus in rowColors.indices) {
-                            val guess = gameViewModel.guessList[currentRowFocus]
-                            if(guess.isNotBlank()) {
-                                rowColors[currentRowFocus] = gameViewModel.checkColor(guess)
-                                Log.d("ROW", rowColors[currentRowFocus].toString())
-                                currentRowFocus++
-                            }
-                        }
+                        val guess = gameViewModel.guessList[currentRowFocus]
+                        //remove finished - wrong and make them states of viewmodel vals!!
+                        //remove finished - wrong and make them states of viewmodel vals!!
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.LightGray
@@ -294,37 +295,24 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         fontWeight = FontWeight.Bold
                     )
                 }
-                Button(
-                    onClick = {
-                        gameViewModel.generateWord()
-                        finished = false
-                        wrong = false
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.LightGray
-                    ),
-                    shape = CutCornerShape(0.dp),
-                    modifier = Modifier
-                        .padding(start = 40.dp)
-                        .width(190.dp)
-                        .height(70.dp),
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Text(
-                        text = "NEW WORD?",
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
 
-            if(finished) {
+            if(gameViewModel.solved.value) {
                 val endMessage = gameViewModel.endMessage
+                var showDialog by remember { mutableStateOf(true) }
                 Log.d("SOLUTION", "yes")
                 scope.launch {
                     snackBarHostState.showSnackbar(
-                        endMessage
+                        message = endMessage
+                    )
+                }
+                if(showDialog) {
+                    EndDialog(
+                        gameViewModel,
+                        onConfirm = {
+                            showDialog = false
+                                    },
+                        onDismiss = { showDialog = false }
                     )
                 }
             }
