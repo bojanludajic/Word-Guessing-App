@@ -15,15 +15,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,14 +61,11 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
     val MAX_ROWS = 5
     val MAX_LETTERS = 5
 
-    var finished by remember { mutableStateOf(false) }
-    var wrong by remember { mutableStateOf(false) }
-
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    val rowColors = gameViewModel.rowColors
-    var currentRowFocus = gameViewModel.currentRow
+    val rowColors = gameViewModel.rowColors.value
+    var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
@@ -67,16 +73,29 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
             TopAppBar(
                 title = { Box(
                     contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
                     Text(
                     "GUESS THE WORD",
-                    style = boldHeadlineLarge,
-                    modifier = Modifier
-                        .padding(top = 40.dp, start = 60.dp),
+                    style = boldHeadlineLarge
                 )}
                         },
+                actions = {
+                    IconButton(onClick = {
+                        showDialog = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Info ,
+                            contentDescription = "Info",
+                            modifier = Modifier
+                                .size(35.dp)
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 20.dp),
             )
         }
     ) {
@@ -99,7 +118,7 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                                 .padding(2.dp)
                                 .border(
                                     width = 2.dp,
-                                    color = if(rowColors[rowIndex][letterIndex] == Color.White) Color.Black else Color.White
+                                    color = if (rowColors[rowIndex][letterIndex] == Color.White) Color.Black else Color.White
                                 )
                                 .size(65.dp)
                                 .background(rowColors[rowIndex][letterIndex]),
@@ -119,30 +138,14 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 }
             }
 
-            /* ADD LATER
-            Button(
-                /* IMPLEMENTATION MISSING, PROVIDED EXAMPLE IS JUST FOR TESTING PURPOSES */
-                onClick = { gameViewModel.curWord.value = gameViewModel.solution.value },
-                modifier = Modifier
-                    .padding(bottom = 30.dp, top = 30.dp),
-                shape = CutCornerShape(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    LightOrange
-                )
-            ) {
-                Text(
-                    text = "HINT",
-                    style = boldHeadlineLarge
-                )
-            }
-             */
+
             Row(
                 modifier = Modifier
-                    .padding(top = 30.dp)
+                    .padding(top = 10.dp)
             ) {
                 val score = gameViewModel.wins
                 val wordCount = gameViewModel.wordCount
-                val wins = if(score > 0) "$score" else ""
+                val wins = "$score"
                 Text(
                     style = boldHeadlineLarge,
                     text = "WINS: $wins",
@@ -161,7 +164,7 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 50.dp)
+                    .padding(top = 10.dp)
             ) {
                 repeat(10) { btnIndex ->
                     val char = firstRow.getOrNull(btnIndex) ?: ""
@@ -274,19 +277,18 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                 Button(
                     onClick = {
                         gameViewModel.check()
-                        val guess = gameViewModel.guessList[currentRowFocus]
-                        //remove finished - wrong and make them states of viewmodel vals!!
-                        //remove finished - wrong and make them states of viewmodel vals!!
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.LightGray
+                        containerColor = if(gameViewModel.curWord.value.length == 5) Color.Black
+                                            else Color.Black
                     ),
                     shape = CutCornerShape(0.dp),
                     modifier = Modifier
                         .padding(2.dp)
                         .width(170.dp)
                         .height(70.dp),
-                    contentPadding = PaddingValues(0.dp)
+                    contentPadding = PaddingValues(0.dp),
+                    enabled = (!gameViewModel.solved.value && !gameViewModel.failed.value && gameViewModel.curWord.value.length == 5)
                 ) {
                     Text(
                         text = "ENTER",
@@ -295,34 +297,70 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         fontWeight = FontWeight.Bold
                     )
                 }
+
+                Button(
+                    onClick = {
+                        gameViewModel.generateWord()
+                    },
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .padding(start = 30.dp)
+                        .size(70.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        Color.Black
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "New words",
+                        modifier = Modifier
+                            .size(50.dp)
+                    )
+                }
             }
 
             if(gameViewModel.solved.value) {
                 val endMessage = gameViewModel.endMessage
-                var showDialog by remember { mutableStateOf(true) }
                 Log.d("SOLUTION", "yes")
                 scope.launch {
                     snackBarHostState.showSnackbar(
                         message = endMessage
                     )
                 }
-                if(showDialog) {
-                    EndDialog(
-                        gameViewModel,
-                        onConfirm = {
-                            showDialog = false
-                                    },
-                        onDismiss = { showDialog = false }
-                    )
-                }
             }
 
-            if(wrong) {
+            if(gameViewModel.failed.value) {
                 val endMessage = "Almost! Solution: ${gameViewModel.solution.value}"
                 scope.launch {
                     snackBarHostState.showSnackbar(
                         endMessage
                     )
+                }
+            }
+
+            if(gameViewModel.wordTooShort.value == true) {
+                scope.launch {
+                    snackBarHostState.showSnackbar(
+                        "Please enter a 5 letter word!"
+                    )
+                }
+                gameViewModel.wordTooShort.value = false
+            }
+
+            if(gameViewModel.wrongWord.value == true) {
+                scope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = "Invalid word!",
+                    )
+                }
+                gameViewModel.wrongWord.value = false
+            }
+            
+            if(showDialog) {
+                EndDialog(
+                    gameViewModel = gameViewModel
+                ) {
+                    
                 }
             }
 

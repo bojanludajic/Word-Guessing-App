@@ -1,14 +1,17 @@
 package com.example.wordguessingapp.viewmodel
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
-import com.example.wordguessingapp.data.words
+import com.example.wordguessingapp.data.parse
 import com.example.wordguessingapp.ui.theme.DarkerGreen
 import com.example.wordguessingapp.ui.theme.DarkerYellow
 import kotlin.random.Random
@@ -19,32 +22,48 @@ enum class Result {
 }
 
 
-class GameViewModel : ViewModel() {
+class GameViewModel(application: Application) : AndroidViewModel(application) {
+
+    val words: List<String> = parse(application)
 
     private val _curWord: MutableState<String> = mutableStateOf("")
     val curWord: MutableState<String> get() = _curWord
+
     val solution: MutableState<String> = mutableStateOf("")
 
     var currentRow by mutableIntStateOf(0)
 
     var guessList = MutableList(5) { " " }
+        private set
 
     var endMessage by mutableStateOf("")
+        private set
+
     var solved: MutableState<Boolean> = mutableStateOf(false)
+        private set
+    var failed: MutableState<Boolean> = mutableStateOf(false)
+        private set
 
     var letterColors: MutableMap<Char, Color> = ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
         private set
-    var rowColors: MutableList<MutableList<Color>> = MutableList(5) { MutableList(5) { Color.White } }
+
+    var rowColors: MutableState<List<MutableList<Color>>> = mutableStateOf(List(5) { MutableList(5) { Color.White } })
+        private set
 
     var wins: Int by mutableIntStateOf(0)
+        private set
     var wordCount: Int by mutableIntStateOf(0)
+        private set
+
+    var wordTooShort: MutableState<Boolean> = mutableStateOf(false)
+    var wrongWord: MutableState<Boolean> = mutableStateOf(false)
 
     init {
         generateWord()
     }
 
     fun addLetter(c: Char) {
-        if(_curWord.value.length < 5 ) {
+        if(_curWord.value.length < 5 && !solved.value && !failed.value) {
             _curWord.value += c
             Log.d("ADDED", c.toString())
             Log.d("CURRENT WORD", _curWord.value)
@@ -60,7 +79,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun check() {
-        if(_curWord.value.length == 5 && !solved.value) {
+        if(solved.value || failed.value) {
+            return
+        }
+        if(_curWord.value.length == 5 && words.contains(_curWord.value)) {
             checkColor(_curWord.value)
             if(_curWord.value == solution.value) {
                 endMessage = Result.entries.getOrNull(currentRow).toString()
@@ -71,9 +93,14 @@ class GameViewModel : ViewModel() {
                 }
                 guessList[currentRow] = _curWord.value
                 wins++
-            } else if(currentRow <= 4) {
+            } else {
                 guessList[currentRow] = _curWord.value
                 currentRow += 1
+                if(currentRow == 5) {
+                    failed.value = true
+                    endMessage = "Nice try! Solution: ${solution.value}"
+                }
+
                 Log.d("GUESS LIST", guessList.toString())
                 for(i in 0..4) {
                     val guessedChar = _curWord.value[i]
@@ -85,9 +112,10 @@ class GameViewModel : ViewModel() {
                     }
                 }
                 _curWord.value = ""
-            } else if(currentRow == 4) {
-                endMessage = "Next time!"
             }
+        } else {
+            wrongWord.value = !words.contains(_curWord.value)
+            wordTooShort.value = _curWord.value.length < 5
         }
     }
 
@@ -113,7 +141,8 @@ class GameViewModel : ViewModel() {
                 }
             }
         }
-        rowColors[currentRow] = result.toMutableList()
+        rowColors.value[currentRow].clear()
+        rowColors.value[currentRow].addAll(result)
     }
 
     fun generateWord() {
@@ -122,9 +151,10 @@ class GameViewModel : ViewModel() {
         _curWord.value = ""
         guessList = MutableList(5) {"     "}
         letterColors = resetColors()
-        rowColors = resetRows()
+        resetRows()
         Log.d("GENERATED SOLUTION", solution.value)
         solved.value = false
+        failed.value = false
         currentRow = 0
         wordCount++
     }
@@ -133,7 +163,7 @@ class GameViewModel : ViewModel() {
         return ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
     }
 
-    private fun resetRows(): MutableList<MutableList<Color>> {
-        return MutableList(5) { MutableList(5) { Color.White } }
+    private fun resetRows() {
+        rowColors.value = List(5) { mutableStateListOf(Color.White, Color.White, Color.White, Color.White, Color.White) }
     }
 }

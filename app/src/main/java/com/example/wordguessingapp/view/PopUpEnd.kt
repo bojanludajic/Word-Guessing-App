@@ -11,12 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.wordguessingapp.ui.theme.boldHeadlineLarge
 import com.example.wordguessingapp.viewmodel.GameViewModel
 
 @Composable
 fun EndDialog(
     gameViewModel: GameViewModel,
-    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val title = gameViewModel.endMessage
@@ -25,25 +26,34 @@ fun EndDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
-                onClick = { gameViewModel.generateWord() }
+                onClick = {
+                    gameViewModel.generateWord()
+                    onDismiss
+                }
             ) {
                 Text(
                     text = "NEW WORD?",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.Black
                 )
             }
         },
-        title = { Text(title) },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss
-            ) {
-                Text(
-                    text = "CLOSE",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        },
+        title = { Text(
+            text = title,
+            fontSize = 20.sp
+        ) },
+//        dismissButton = {
+//            TextButton(
+//                onClick = {
+//                    onDismiss
+//                }
+//            ) {
+//                Text(
+//                    text = "CLOSE",
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
+//            }
+//        },
         containerColor = Color.White,
         shape = CutCornerShape(0.dp),
         modifier = Modifier
