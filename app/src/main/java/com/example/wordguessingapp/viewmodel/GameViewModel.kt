@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import com.example.wordguessingapp.data.parse
+import com.example.wordguessingapp.ui.theme.DarkerGray1
+import com.example.wordguessingapp.ui.theme.DarkerGray2
 import com.example.wordguessingapp.ui.theme.DarkerGreen
 import com.example.wordguessingapp.ui.theme.DarkerYellow
 import kotlin.random.Random
@@ -28,6 +30,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _curWord: MutableState<String> = mutableStateOf("")
     val curWord: MutableState<String> get() = _curWord
+
+    private val _darkMode: MutableState<Boolean> = mutableStateOf(false)
+    val darkMode: MutableState<Boolean> get() = _darkMode
 
     val solution: MutableState<String> = mutableStateOf("")
 
@@ -57,6 +62,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     var wordTooShort: MutableState<Boolean> = mutableStateOf(false)
     var wrongWord: MutableState<Boolean> = mutableStateOf(false)
+
+
+    val backGroundColor:MutableState<Color> = mutableStateOf(Color.White)
+    val letterColor: MutableState<Color> = mutableStateOf(Color.Black)
+
 
     init {
         generateWord()
@@ -165,5 +175,17 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun resetRows() {
         rowColors.value = List(5) { mutableStateListOf(Color.White, Color.White, Color.White, Color.White, Color.White) }
+    }
+
+    public fun toggleDarkMode() {
+        _darkMode.value = !_darkMode.value
+        if(_darkMode.value) {
+            backGroundColor.value = DarkerGray1
+            letterColor.value = Color.White
+        } else {
+            backGroundColor.value = Color.White
+            letterColor.value = Color.Black
+        }
+        Log.d("DARKMODE", darkMode.value.toString())
     }
 }

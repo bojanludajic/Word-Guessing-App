@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +31,8 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -42,22 +45,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wordguessingapp.data.firstRow
 import com.example.wordguessingapp.data.secondRow
 import com.example.wordguessingapp.data.thirdRow
+import com.example.wordguessingapp.ui.theme.DarkerGray1
+import com.example.wordguessingapp.ui.theme.DarkerGray2
 import com.example.wordguessingapp.viewmodel.GameViewModel
 import com.example.wordguessingapp.ui.theme.boldHeadlineLarge
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.example.wordguessingapp.R
+import com.example.wordguessingapp.ui.theme.DarkGray2
+import com.example.wordguessingapp.ui.theme.DarkGray3
+import com.example.wordguessingapp.ui.theme.DarkGray4
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition",
     "MutableCollectionMutableState"
 )
 @Composable
-fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
+fun MainScreen(
+    modifier: Modifier,
+    gameViewModel: GameViewModel
+) {
     val MAX_ROWS = 5
     val MAX_LETTERS = 5
 
@@ -69,44 +86,48 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                    "GUESS THE WORD",
-                    style = boldHeadlineLarge
-                )}
-                        },
-                actions = {
-                    IconButton(onClick = {
-                        showDialog = true
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Info ,
-                            contentDescription = "Info",
-                            modifier = Modifier
-                                .size(35.dp)
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-            )
-        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .padding(top = 50.dp, start = 13.dp, end = 10.dp)
                 .fillMaxSize()
+                .background(
+                    gameViewModel.backGroundColor.value
+                )
         ) {
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "GUESS THE WORD",
+                    style = boldHeadlineLarge,
+                    color =
+                    if(gameViewModel.darkMode.value) {
+                        Color.White
+                    } else {
+                        Color.Black
+                    }
+                )
+                Switch(
+                    checked = gameViewModel.darkMode.value,
+                    onCheckedChange = { gameViewModel.toggleDarkMode() },
+                    colors = SwitchDefaults.colors(
+                        checkedIconColor = Color.White,
+                        uncheckedIconColor = Color.Black,
+                        checkedThumbColor = Color.White,
+                        uncheckedThumbColor = Color.Black,
+                        checkedTrackColor = Color.Black,
+                        uncheckedTrackColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .padding(start = 30.dp)
+                )
+            }
             for (rowIndex in 0 until MAX_ROWS) {
                 Row(
 
@@ -118,10 +139,22 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                                 .padding(2.dp)
                                 .border(
                                     width = 2.dp,
-                                    color = if (rowColors[rowIndex][letterIndex] == Color.White) Color.Black else Color.White
+                                    color = if (!gameViewModel.darkMode.value) {
+                                        if (rowColors[rowIndex][letterIndex] == Color.White) Color.Black else Color.White
+                                    } else {
+                                        if (rowColors[rowIndex][letterIndex] == Color.White) DarkGray4 else DarkerGray1
+                                    }
                                 )
                                 .size(65.dp)
-                                .background(rowColors[rowIndex][letterIndex]),
+                                .background(
+                                    if (rowColors[rowIndex][letterIndex] == Color.White && gameViewModel.darkMode.value) {
+                                        DarkerGray1
+                                    } else if (rowColors[rowIndex][letterIndex] == Color.White && !gameViewModel.darkMode.value) {
+                                        Color.White
+                                    } else {
+                                        rowColors[rowIndex][letterIndex]
+                                    }
+                                ),
                             contentAlignment = Alignment.Center,
                             ) {
                             Text(
@@ -131,7 +164,7 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                                     else -> ""
                                 },
                                 style = boldHeadlineLarge,
-                                color = if(rowColors[rowIndex][letterIndex] == Color.White) Color.Black else Color.White
+                                color = if(rowColors[rowIndex][letterIndex] == Color.White && !gameViewModel.darkMode.value) Color.Black else Color.White
                             )
                         }
                     }
@@ -150,123 +183,169 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                     style = boldHeadlineLarge,
                     text = "WINS: $wins",
                     modifier = Modifier
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    color = if(gameViewModel.darkMode.value) {
+                        Color.White
+                    } else {
+                        Color.Black
+                    }
                 )
 
                 Text(
                     style = boldHeadlineLarge,
                     text = "WORDS: $wordCount",
                     modifier = Modifier
-                        .padding(10.dp)
+                        .padding(10.dp),
+                    color = if(gameViewModel.darkMode.value) {
+                        Color.White
+                    } else {
+                        Color.Black
+                    }
                 )
             }
-
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
+                    .padding(start = 15.dp)
             ) {
-                repeat(10) { btnIndex ->
-                    val char = firstRow.getOrNull(btnIndex) ?: ""
-                    val color = gameViewModel.letterColors[char]!!
-                    Button(
-                        onClick = { gameViewModel.addLetter(firstRow[btnIndex]) },
-                        shape = CutCornerShape(0.dp),
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .height(45.dp)
-                            .width(33.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = color
-                        ),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text = "$char",
-                            color = if(color == Color.DarkGray) Color.White else Color.Black,
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    repeat(10) { btnIndex ->
+                        val char = firstRow.getOrNull(btnIndex) ?: ""
+                        val color = gameViewModel.letterColors[char]!!
+                        Button(
+                            onClick = { gameViewModel.addLetter(firstRow[btnIndex]) },
+                            shape = CutCornerShape(0.dp),
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .height(45.dp)
+                                .width(33.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if(gameViewModel.darkMode.value) {
+                                    if(color == Color.LightGray) DarkGray3 else color
+                                } else {
+                                    color
+                                }
+                            ),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text(
+                                text = "$char",
+                                color = if (gameViewModel.darkMode.value) {
+                                    Color.White
+                                } else {
+                                    if (color == Color.DarkGray) Color.White else Color.Black
+                                },
+                                fontSize = 25.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
+                    }
+
+
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                ) {
+                    repeat(9) { btnIndex ->
+                        val char = secondRow.getOrNull(btnIndex) ?: ""
+                        val color = gameViewModel.letterColors[char]!!
+                        Button(
+                            onClick = { gameViewModel.addLetter(secondRow[btnIndex]) },
+                            shape = CutCornerShape(0.dp),
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .height(45.dp)
+                                .width(33.dp),
+                            contentPadding = PaddingValues(0.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if(gameViewModel.darkMode.value) {
+                                    if(color == Color.LightGray) DarkGray3 else color
+                                } else {
+                                    color
+                                }
+                            )
+                        ) {
+                            Text(
+                                text = "$char",
+                                color = if (gameViewModel.darkMode.value) {
+                                    Color.White
+                                } else {
+                                    if (color == Color.DarkGray) Color.White else Color.Black
+                                },
+                                fontSize = 25.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
                     }
                 }
-
-
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
-            ) {
-                repeat(9) { btnIndex ->
-                    val char = secondRow.getOrNull(btnIndex) ?: ""
-                    val color = gameViewModel.letterColors[char]!!
+                Row(
+                    modifier = Modifier
+                        .padding(start = 18.dp)
+                ) {
+                    repeat(7) { btnIndex ->
+                        val char = thirdRow.getOrNull(btnIndex) ?: ""
+                        val color = gameViewModel.letterColors[char]!!
+                        Button(
+                            onClick = { gameViewModel.addLetter(thirdRow[btnIndex]) },
+                            shape = CutCornerShape(0.dp),
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .height(45.dp)
+                                .width(33.dp),
+                            contentPadding = PaddingValues(0.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if(gameViewModel.darkMode.value) {
+                                    if(color == Color.LightGray) DarkGray3 else color
+                                } else {
+                                    color
+                                }
+                            )
+                        ) {
+                            Text(
+                                text = "$char",
+                                color = if (gameViewModel.darkMode.value) {
+                                    Color.White
+                                } else {
+                                    if (color == Color.DarkGray) Color.White else Color.Black
+                                },
+                                fontSize = 25.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
+                    }
+                    val solved = gameViewModel.solved.value
                     Button(
-                        onClick = { gameViewModel.addLetter(secondRow[btnIndex]) },
+                        onClick = { if (!solved) gameViewModel.removeLetter() },
                         shape = CutCornerShape(0.dp),
                         modifier = Modifier
-                            .padding(2.dp)
-                            .height(45.dp)
-                            .width(33.dp),
+                            .padding(horizontal = 2.dp, vertical = 2.dp)
+                            .width(60.dp)
+                            .height(45.dp),
                         contentPadding = PaddingValues(0.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = color
+                            containerColor = if(gameViewModel.darkMode.value) {
+                                DarkGray3
+                            } else {
+                                Color.LightGray
+                            }
                         )
                     ) {
                         Text(
-                            text = "$char",
-                            color = if(color == Color.DarkGray) Color.White else Color.Black,
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.ExtraBold
+                            text = "⌫",
+                            color = if (gameViewModel.darkMode.value) {
+                                Color.White
+                            } else {
+                                Color.Black
+                            },
+                            fontSize = 27.sp,
+                            fontWeight = FontWeight.ExtraBold,
                         )
                     }
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .padding(start = 18.dp)
-            ) {
-                repeat(7) { btnIndex ->
-                    val char = thirdRow.getOrNull(btnIndex) ?: ""
-                    val color = gameViewModel.letterColors[char]!!
-                    Button(
-                        onClick = { gameViewModel.addLetter(thirdRow[btnIndex]) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = color
-                        ),
-                        shape = CutCornerShape(0.dp),
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .height(45.dp)
-                            .width(33.dp),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Text(
-                            text = "$char",
-                            color = if(color == Color.DarkGray) Color.White else Color.Black,
-                            fontSize = 25.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    }
-                }
-                val solved = gameViewModel.solved.value
-                Button(
-                    onClick = { if (!solved) gameViewModel.removeLetter() },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.LightGray
-                    ),
-                    shape = CutCornerShape(0.dp),
-                    modifier = Modifier
-                        .padding(horizontal = 2.dp, vertical = 2.dp)
-                        .width(60.dp)
-                        .height(45.dp),
-                    contentPadding = PaddingValues(0.dp)
-                ) {
-                    Text(
-                        text = "⌫",
-                        color = Color.Black,
-                        fontSize = 27.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                    )
                 }
             }
 
@@ -279,8 +358,11 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         gameViewModel.check()
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if(gameViewModel.curWord.value.length == 5) Color.Black
-                                            else Color.Black
+                        containerColor = if(gameViewModel.darkMode.value) {
+                            DarkGray3
+                        } else {
+                            Color.LightGray
+                        }
                     ),
                     shape = CutCornerShape(0.dp),
                     modifier = Modifier
@@ -288,11 +370,15 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         .width(170.dp)
                         .height(70.dp),
                     contentPadding = PaddingValues(0.dp),
-                    enabled = (!gameViewModel.solved.value && !gameViewModel.failed.value && gameViewModel.curWord.value.length == 5)
+                    enabled = (!gameViewModel.solved.value && !gameViewModel.failed.value)
                 ) {
                     Text(
                         text = "ENTER",
-                        color = Color.White,
+                        color = if(gameViewModel.darkMode.value) {
+                            Color.White
+                        } else {
+                            Color.Black
+                        },
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -307,15 +393,20 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
                         .padding(start = 30.dp)
                         .size(70.dp),
                     colors = ButtonDefaults.buttonColors(
-                        Color.Black
+                        if(gameViewModel.darkMode.value) {
+                            DarkGray3
+                        } else {
+                            Color.LightGray
+                        }
                     )
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "New words",
-                        modifier = Modifier
-                            .size(50.dp)
-                    )
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "New words",
+                            modifier = Modifier
+                                .size(50.dp),
+                            tint = if(gameViewModel.darkMode.value) Color.White else Color.Black
+                        )
                 }
             }
 
@@ -341,7 +432,7 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
             if(gameViewModel.wordTooShort.value == true) {
                 scope.launch {
                     snackBarHostState.showSnackbar(
-                        "Please enter a 5 letter word!"
+                        "Not enough letters"
                     )
                 }
                 gameViewModel.wordTooShort.value = false
@@ -350,14 +441,14 @@ fun MainScreen(modifier: Modifier, gameViewModel: GameViewModel) {
             if(gameViewModel.wrongWord.value == true) {
                 scope.launch {
                     snackBarHostState.showSnackbar(
-                        message = "Invalid word!",
+                        message = "Invalid word",
                     )
                 }
                 gameViewModel.wrongWord.value = false
             }
             
             if(showDialog) {
-                EndDialog(
+                SettingsDialog(
                     gameViewModel = gameViewModel
                 ) {
                     
