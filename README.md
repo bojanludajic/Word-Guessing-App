@@ -1,6 +1,6 @@
-Word Guessing App
+# Word Guessing App
 
-Clone of Wordle by New York Times recreated using Kotlin and Jetpack Compose.
+Native Android app inspired by [Wordle](https://www.nytimes.com/games/wordle/index.html) written in Kotlin with Jetpack Compose.
 
 Screenshots:
 
