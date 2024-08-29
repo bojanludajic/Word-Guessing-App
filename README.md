@@ -4,6 +4,6 @@ Native Android app inspired by [Wordle](https://www.nytimes.com/games/wordle/ind
 
 Screenshots:
 
-| Start            | Random         | Win              | Loss             | Invalid Word     | Dark Mode        |
-|------------------|------------------|------------------|------------------|------------------|------------------|
-| <img src="https://github.com/user-attachments/assets/1ff500a5-2154-42d6-bfbb-a140d305e51f" width="100"/>   | <img src="https://github.com/user-attachments/assets/7d258150-c84b-4fcd-9d47-03a9bdd405f1" width="100"/> | <img src="https://github.com/user-attachments/assets/f2f39a44-7d3f-42dc-b014-76bbfa6d5675" width="100"/>   | <img src="https://github.com/user-attachments/assets/10976345-0f38-4948-91c0-ad56868add5a" width="100"/>    | <img src="https://github.com/user-attachments/assets/10976345-0f38-4948-91c0-ad56868add5a" width="100"/> | <img src="https://github.com/user-attachments/assets/bf7b5f87-0ab5-4632-8fd7-4de73f335677" width="100"/> |
+| Start            | Playing         | Win              | Loss             | Invalid Word     | Dark Mode        |
+|------------------|-----------------|------------------|------------------|------------------|------------------|
+| <img src="https://github.com/user-attachments/assets/1216ee5b-4bef-4e56-8421-ce14b24657de" width="100"/>   | <img src="https://github.com/user-attachments/assets/9cec94aa-c2b4-4236-8403-0099e3b0840f" width="100"/> | <img src="https://github.com/user-attachments/assets/a8cc703f-71ec-4435-845d-7f1c160218c2" width="100"/>   | <img src="https://github.com/user-attachments/assets/b46f6e01-bc98-4b20-9e72-e854a49c6ded" width="100"/>    | <img src="https://github.com/user-attachments/assets/92774ce2-8291-4b26-b507-23ad1288c199" width="100"/> | <img src="https://github.com/user-attachments/assets/30be9959-adba-46e6-aafb-f70e0acebe8b" width="100"/> |
