@@ -10,10 +10,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import com.example.wordguessingapp.data.parse
 import com.example.wordguessingapp.ui.theme.DarkerGray1
-import com.example.wordguessingapp.ui.theme.DarkerGray2
 import com.example.wordguessingapp.ui.theme.DarkerGreen
 import com.example.wordguessingapp.ui.theme.DarkerYellow
 import kotlin.random.Random
