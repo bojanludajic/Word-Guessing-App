@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
 import com.example.wordguessingapp.data.parse
 import com.example.wordguessingapp.ui.theme.DarkerGray1
 import com.example.wordguessingapp.ui.theme.DarkerGreen
@@ -25,6 +26,7 @@ enum class Result {
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     val words: List<String> = parse(application)
+
 
     private val _curWord: MutableState<String> = mutableStateOf("")
     val curWord: MutableState<String> get() = _curWord
@@ -46,6 +48,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         private set
     var failed: MutableState<Boolean> = mutableStateOf(false)
         private set
+    private val _snackBarShown = mutableStateOf(false)
+    val snackBarShown: MutableState<Boolean> get() = _snackBarShown
 
     var letterColors: MutableMap<Char, Color> = ('A'..'Z').associateWith { Color.LightGray }.toMutableMap()
         private set
@@ -165,6 +169,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         failed.value = false
         currentRow = 0
         wordCount++
+        _snackBarShown.value = false
     }
 
     private fun resetColors(): MutableMap<Char, Color> {
@@ -175,7 +180,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         rowColors.value = List(5) { mutableStateListOf(Color.White, Color.White, Color.White, Color.White, Color.White) }
     }
 
-    public fun toggleDarkMode() {
+    fun toggleDarkMode() {
         _darkMode.value = !_darkMode.value
         if(_darkMode.value) {
             backGroundColor.value = DarkerGray1

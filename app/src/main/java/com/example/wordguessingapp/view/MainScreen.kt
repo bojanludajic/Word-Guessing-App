@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -390,7 +392,7 @@ fun MainScreen(
                 }
             }
 
-            if(gameViewModel.solved.value) {
+            if(gameViewModel.solved.value && !gameViewModel.snackBarShown.value) {
                 val endMessage = gameViewModel.endMessage
                 Log.d("SOLUTION", "yes")
                 scope.launch {
@@ -398,15 +400,17 @@ fun MainScreen(
                         message = endMessage
                     )
                 }
+                gameViewModel.snackBarShown.value = true
             }
 
-            if(gameViewModel.failed.value) {
+            if(gameViewModel.failed.value && !gameViewModel.snackBarShown.value) {
                 val endMessage = "Almost! Solution: ${gameViewModel.solution.value}"
                 scope.launch {
                     snackBarHostState.showSnackbar(
                         endMessage
                     )
                 }
+                gameViewModel.snackBarShown.value = true
             }
 
             if(gameViewModel.wordTooShort.value == true) {
