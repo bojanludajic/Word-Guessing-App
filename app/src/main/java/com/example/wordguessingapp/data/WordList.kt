@@ -12,17 +12,14 @@ fun parse(context: Context): List<String> {
     }
 }
 
-val solutions = listOf(
-    "APPLE", "MANGO", "GRAPE", "BERRY", "PEACH", "LEMON", "MELON", "KIWI", "OLIVE", "PLUM",
-    "GUAVA", "LIME", "FIG", "PEAR", "DATES", "CHILI", "SQUAD", "BRAVE", "HAPPY", "CRISP",
-    "TANGO", "PEARL", "SLATE", "WATER", "SOLVE", "CANDY", "BREAD", "CRATE", "SHINY", "PEACH",
-    "SHINE", "FLASH", "PRISM", "SWEET", "GRIND", "SUGAR", "PLUMB", "COVER", "SPOON", "SWEEP",
-    "CLOUD", "FRUIT", "MINTY", "DRIFT", "MOOSE", "STORM", "BLOWS", "BRUSH", "SPICE", "FLAKE",
-    "GRASS", "LEAFY", "GLINT", "PRONG", "STONE", "CLOVE", "CHIVE", "GARLIC", "THYME", "ONION",
-    "PLANT", "STALK", "MOUSE", "CRISP", "BRISK", "TIDAL", "SPARE", "WINDY", "FLUSH", "GLEAM",
-    "SPLIT", "SPLAT", "CRISP", "CRANK", "CLASP", "SNACK", "TREAT", "BLINK", "GHOST", "PRIDE",
-    "GRAVE", "BRUSH", "SHORE", "SWIFT", "FLOCK", "PLUCK", "GLARE", "SPARK", "FROST", "TULIP",
-    "GLOVE", "STEEP", "QUICK", "THORN", "CRACK", "PLUMB", "SPICE", "CLOVE", "FRANK", "SHOCK"
-)
+val solutions = listOf("APPLE", "BERRY", "CHAIR", "DRIVE", "EAGLE", "FIELD", "GIANT", "HOUSE", "IGLOO", "JOKER",
+    "KNEEL", "LAYER", "MANGO", "NIGHT", "OCEAN", "PAPER", "QUILT", "RIVER", "SNAKE", "TABLE",
+    "UNCLE", "VIVID", "WAGON", "XYLOX", "YACHT", "ZEBRA", "ALONE", "BRAVE", "CHESS", "DAISY",
+    "ELDER", "FAIRY", "GHOST", "HORSE", "INDEX", "JUMPY", "KARMA", "LIGHT", "MIGHT", "NEVER",
+    "OFFER", "PARTY", "QUEST", "ROYAL", "SHEEP", "TIGER", "URBAN", "VALUE", "WOMAN", "XENON",
+    "YOUTH", "ZONED", "ARROW", "BEACH", "CANDY", "DREAM", "EARTH", "FLAME", "GRAIN", "HEART",
+    "INPUT", "JOLLY", "KNOCK", "LEMON", "MONEY", "NORTH", "OLIVE", "PLANT", "QUIET", "REACT",
+    "SOUND", "TRAIN", "UNDER", "VISIT", "WHISK", "XEBEC", "YEAST", "ZESTY", "ANGEL", "BLOOM",
+    "CRISP", "DELTA", "EMBER", "FROST", "GLASS", "HONEY", "INNER", "JELLY", "KNIFE", "LEAFY")
 
 
