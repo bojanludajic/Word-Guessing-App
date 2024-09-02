@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Lifecycle
 import com.example.wordguessingapp.data.parse
+import com.example.wordguessingapp.data.solutions
 import com.example.wordguessingapp.ui.theme.DarkerGray1
 import com.example.wordguessingapp.ui.theme.DarkerGreen
 import com.example.wordguessingapp.ui.theme.DarkerYellow
@@ -26,7 +27,6 @@ enum class Result {
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     val words: List<String> = parse(application)
-
 
     private val _curWord: MutableState<String> = mutableStateOf("")
     val curWord: MutableState<String> get() = _curWord
@@ -126,8 +126,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 _curWord.value = ""
             }
         } else {
-            wrongWord.value = !words.contains(_curWord.value)
-            wordTooShort.value = _curWord.value.length < 5
+            if(_curWord.value.length < 5) {
+                wordTooShort.value = _curWord.value.length < 5
+            } else if(!words.contains(_curWord.value)) {
+                wrongWord.value = !words.contains(_curWord.value)
+            }
         }
     }
 
@@ -158,8 +161,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun generateWord() {
-        val randIndex = Random.nextInt(words.size)
-        solution.value = words[randIndex]
+        val randIndex = Random.nextInt(solutions.size)
+        solution.value = solutions[randIndex]
         _curWord.value = ""
         guessList = MutableList(5) {"     "}
         letterColors = resetColors()
